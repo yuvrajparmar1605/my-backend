@@ -3,8 +3,8 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
-import userRoutes from "./routes/user.js"; 
-// Load environment variables
+import userRoutes from "./routes/user.js";
+
 dotenv.config();
 
 const app = express();
@@ -12,7 +12,14 @@ const app = express();
 // ========================
 // 🔹 Middleware
 // ========================
-app.use(cors());
+app.use(cors({
+  origin: [
+    "http://localhost:5173", // ✅ local frontend (dev)
+    "https://fir-connection-71eee.web.app", // ✅ your Firebase hosted frontend
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,
+}));
 app.use(express.json());
 
 // ========================
@@ -63,7 +70,6 @@ app.post("/api/contact", async (req, res) => {
 });
 
 // 👤 Users API
-// ✅ only once
 app.use("/api/users", userRoutes);
 
 // ========================
