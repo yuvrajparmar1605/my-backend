@@ -1,8 +1,9 @@
+// server.js
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
-import userRoutes from "./routes/user.js";
+
 // Load environment variables
 dotenv.config();
 
@@ -11,25 +12,23 @@ const app = express();
 // ========================
 // 🔹 Middleware
 // ========================
-app.use("/api/users", userRoutes);
 app.use(cors());
 app.use(express.json());
 
 // ========================
 // 🔹 MongoDB Connection
 // ========================
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log("✅ MongoDB connected"))
-.catch((err) => console.error("❌ MongoDB error:", err));
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch((err) => console.error("❌ MongoDB error:", err));
 
 // ========================
 // 🔹 Schemas & Models
 // ========================
-
-// Contact Message Schema
 const messageSchema = new mongoose.Schema({
   name: String,
   email: String,
@@ -63,8 +62,8 @@ app.post("/api/contact", async (req, res) => {
   }
 });
 
-// 👤 Users API (from routes/user.js)
-import userRoutes from "./routes/user.js";
+// 👤 Users API
+import userRoutes from "./routes/user.js"; // ✅ only once
 app.use("/api/users", userRoutes);
 
 // ========================
