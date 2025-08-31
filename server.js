@@ -3,7 +3,7 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
-
+import userRoutes from "./routes/user.js"; 
 // Load environment variables
 dotenv.config();
 
@@ -63,7 +63,7 @@ app.post("/api/contact", async (req, res) => {
 });
 
 // 👤 Users API
-import userRoutes from "./routes/user.js"; // ✅ only once
+// ✅ only once
 app.use("/api/users", userRoutes);
 
 // ========================

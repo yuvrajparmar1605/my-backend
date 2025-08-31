@@ -7,7 +7,7 @@ import User from "../models/User.js"; // must also be ESM
 const router = express.Router();
 
 // Register
-router.post("/register", async (req, res) => {
+router.post("/signup", async (req, res) => {
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
     return res.status(400).json({ msg: "Please enter all fields" });
