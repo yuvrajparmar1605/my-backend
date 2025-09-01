@@ -1,14 +1,14 @@
-const jwt = require('jsonwebtoken');
+// routes/auth.js
+import express from "express";
+const router = express.Router();
 
-module.exports = function(req, res, next) {
-  const token = req.header('x-auth-token');
-  if (!token) return res.status(401).json({ msg: 'No token, authorization denied' });
+// 🔑 Signup Route
+router.post("/signup", async (req, res) => {
+  const { name, email, password } = req.body;
+  console.log("Signup Request:", req.body);
 
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded.user;
-    next();
-  } catch (err) {
-    res.status(401).json({ msg: 'Token is not valid' });
-  }
-};
+  // ⚡ Save to DB or Firebase here
+  res.json({ message: "User registered successfully" });
+});
+
+export default router;

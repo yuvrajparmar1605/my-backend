@@ -1,9 +1,24 @@
-// routes/user.js
+// backend/routes/user.js
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import User from "../models/User.js"; // must also be ESM
+import mongoose from "mongoose";
 
+// ========================
+// 🔹 User Model
+// ========================
+const userSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+});
+
+// Avoid recompiling model if it already exists
+const User = mongoose.models.User || mongoose.model("User", userSchema);
+
+// ========================
+// 🔹 Router
+// ========================
 const router = express.Router();
 
 // Register
@@ -17,10 +32,10 @@ router.post("/signup", async (req, res) => {
     let user = await User.findOne({ email });
     if (user) return res.status(400).json({ msg: "User already exists" });
 
-    user = new User({ name, email, password });
     const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
+    user = new User({ name, email, password: hashedPassword });
     await user.save();
 
     const payload = { user: { id: user.id } };

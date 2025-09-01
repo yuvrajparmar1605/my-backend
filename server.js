@@ -3,20 +3,30 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
-import userRoutes from "./routes/user.js"; 
-// Load environment variables
-dotenv.config();
 
+// ✅ Routes
+import authRoutes from "./routes/auth.js";     // signup/login
+import userRoutes from "./routes/user.js";     // user management
+
+// ========================
+// 🔹 Environment Config
+// ========================
+dotenv.config();
 const app = express();
 
 // ========================
 // 🔹 Middleware
 // ========================
-app.use(cors());
 app.use(express.json());
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "http://localhost:5174" , "https://fir-connection-71eee.web.app"],// ✅ allow your Vite frontend
+    credentials: true,
+  })
+);
 
 // ========================
-// 🔹 MongoDB Connection
+// 🔹 Database
 // ========================
 mongoose
   .connect(process.env.MONGO_URI, {
@@ -27,7 +37,7 @@ mongoose
   .catch((err) => console.error("❌ MongoDB error:", err));
 
 // ========================
-// 🔹 Schemas & Models
+// 🔹 Models
 // ========================
 const messageSchema = new mongoose.Schema({
   name: String,
@@ -36,14 +46,15 @@ const messageSchema = new mongoose.Schema({
   message: String,
   createdAt: { type: Date, default: Date.now },
 });
-
-const Message = mongoose.model("Message", messageSchema);
+mongoose.model("Message", messageSchema); // register once
 
 // ========================
 // 🔹 Routes
 // ========================
+app.use("/api/auth", authRoutes);   // signup, login, etc.
+app.use("/api/users", userRoutes);  // optional, if you have it
 
-// 📩 Contact Form API
+// 📩 Contact form
 app.post("/api/contact", async (req, res) => {
   try {
     const { name, email, department, message } = req.body;
@@ -52,8 +63,8 @@ app.post("/api/contact", async (req, res) => {
       return res.status(400).json({ error: "All fields are required" });
     }
 
-    const newMsg = new Message({ name, email, department, message });
-    await newMsg.save();
+    const Message = mongoose.model("Message");
+    await new Message({ name, email, department, message }).save();
 
     res.json({ success: true, msg: "Message saved successfully" });
   } catch (err) {
@@ -62,14 +73,10 @@ app.post("/api/contact", async (req, res) => {
   }
 });
 
-// 👤 Users API
-// ✅ only once
-app.use("/api/users", userRoutes);
-
 // ========================
 // 🔹 Start Server
 // ========================
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
+app.listen(PORT, () =>
+  console.log(`🚀 Server running on http://localhost:${PORT}`)
+);
