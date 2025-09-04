@@ -20,7 +20,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5174" , "https://fir-connection-71eee.web.app"],// ✅ allow your Vite frontend
+    origin: ["http://localhost:5173","https://webnxior.com","https://webnxior-beb5d.web.app" ,"http://localhost:5174" , "https://fir-connection-71eee.web.app"],// ✅ allow your Vite frontend
     credentials: true,
   })
 );
